@@ -35,7 +35,7 @@
     }
 
     h2 {
-        margin: 0 0 0.5rem 0;
+        margin: 1rem 0 0.5rem 0;
         font-size: 1.25rem;
         text-transform: uppercase;
     }
@@ -59,13 +59,19 @@
 
     form > label, fieldset {
         display: block;
-        margin-bottom: 0.5em;
     }       
     
     label {
-        text-transform: uppercase;
         font-size: 20px;
     }
+
+    fieldset {
+         margin-top: 24px;
+    }
+    legend {
+        text-transform: uppercase;
+    }
+
     input {
         display: block;
         font-family: inherit;
@@ -264,9 +270,8 @@
         <input type="text" name="awaylogo" id="awaylogo" class="teamlogo" placeholder="def.png" value="def.png"/>
         </label>
     </div>
-    <h2>Time controls</h2>
     <fieldset>
-        <legend>Period:</legend>
+        <legend>Period Controls</legend>
         <input type="radio" id="first" name="period" class="periodcontrol" value="1st Half" checked />
         <label for="first">1st Half</label>
         <input type="radio" id="half" name="period" class="periodcontrol" value="Half Time" />
@@ -279,7 +284,7 @@
     </form>
 
     <fieldset>
-        <legend>Timer:</legend>
+        <legend>Timer</legend>
         <div>
             <button id="twentyBtn">20:00</button>
             <button id="zeroBtn">00:00</button>
@@ -316,7 +321,7 @@
 </div>
     
 <script>
-    // controls
+    // these are all references to the control elements
     var addToStorageForm = document.querySelector('#add-to-storage');
     var homeTeamInput = document.querySelector('#hometeam');
     var awayTeamInput = document.querySelector('#awayteam');
@@ -331,7 +336,7 @@
     var awayTeamLogoInput = document.querySelector('#awaylogo');
     
 
-    // overlay
+    // these are all references to the overlay elements
     var homeTeam = document.querySelector('#team-home');
     var homeBadge = document.querySelector('#home-badge');
     var awayBadge = document.querySelector('#away-badge');
@@ -340,6 +345,7 @@
     var awayTeamScore = document.querySelector('#score-away');
     var period = document.querySelector('#period');
 
+    // score adjustment button actions (saving is handled by events on the inputs)
     document.querySelector('#minusAwayBtn').addEventListener('click', () => {
         if (awayTeamScoreInput.value > 0) {
             awayTeamScoreInput.value--;
@@ -362,7 +368,7 @@
 
     
  
-
+    // Save back to local storage in case of page refresh
     function processFormValues() {    
         if (homeTeamInput.value.length > 0) {
             localStorage.setItem('hometeam', homeTeamInput.value);
@@ -388,7 +394,6 @@
             localStorage.setItem('hometeamcolor', homeTeamColorInput.value);
         }
 
-        
         localStorage.setItem('awaytteamlogo', awayTeamLogoInput.value);
         localStorage.setItem('hometteamlogo', homeTeamLogoInput.value);
         
@@ -397,7 +402,7 @@
         updateDisplayValues();
     }
 
-    // save stuff
+    // save stuff on form submission (this might not be needed anymore, but OBS can be funny sometimes so is a backup)
     addToStorageForm.addEventListener('submit', function (event) {
         // Don't submit the form
         event.preventDefault();
@@ -405,10 +410,12 @@
 
     }, false);
 
+    // auto update the period changes
     document.querySelectorAll('input[name="period"]').forEach((radio) => {
         radio.addEventListener('change', processFormValues);
     });
 
+    // autoupdate the changes made to controls ('input' is a type of event - basically update as people type)
     homeTeamInput.addEventListener('input', processFormValues);
     awayTeamInput.addEventListener('input', processFormValues);
     homeTeamScoreInput.addEventListener('input', processFormValues);
@@ -418,16 +425,18 @@
     homeTeamLogoInput.addEventListener('input', processFormValues);
     awayTeamLogoInput.addEventListener('input', processFormValues);
     
+    //autoupdate the changes on page load
     processFormValues();
 
-    function createAndInsertImage(filename, element) {
+    function createAndInsertBadge(filename, element) {
         const imageUrl = `./logos/${filename}`;
         element.style.backgroundImage = 'url(' + imageUrl + ')';
     };
 
-    // update visuals
+    // update visuals on the Scoreboard
     function updateDisplayValues() {
-        // Check for saved items
+
+        // first lets get all values from local storage
         var storedHomeTeam = localStorage.getItem('hometeam');
         var storedAwayTeam = localStorage.getItem('awayteam');
         var storedPeriod = localStorage.getItem('period');
@@ -438,8 +447,9 @@
         
         var storedHomeTeamLogo = localStorage.getItem('hometteamlogo');
         var storedAwayTeamLogo = localStorage.getItem('awaytteamlogo');
-                
-        // If there are any saved items, update controls and form
+
+
+        // If there are any saved items, update controls and overlay
         if (storedHomeTeam) {
             homeTeam.innerText = storedHomeTeam;
             homeTeamInput.value = storedHomeTeam;
@@ -460,6 +470,7 @@
             period.innerText = storedPeriod;
         }
 
+        // add the team colours into the scoreboard
         if (storedHomeTeamColor) {
             homeTeam.style.background = `linear-gradient(to right, white 50%, ${storedHomeTeamColor})`;
             homeTeamColorInput.value = storedHomeTeamColor;
@@ -470,43 +481,47 @@
             awayTeamColorInput.value = storedAwayTeamColor;
         }
 
+        // add team badges if we have images in the 'logos' folder that match the filenames given
         homeTeamLogoInput.value = storedHomeTeamLogo;
-        createAndInsertImage(homeTeamLogoInput.value, homeBadge);
+        createAndInsertBadge(homeTeamLogoInput.value, homeBadge);
 
         awayTeamLogoInput.value = storedAwayTeamLogo;
-        createAndInsertImage(awayTeamLogoInput.value, awayBadge);
-
-
+        createAndInsertBadge(awayTeamLogoInput.value, awayBadge);
     }
 
+    //update the display values 
     updateDisplayValues();
     
+
+    // watch local storage, and update display values
     window.onstorage = () => {
         updateDisplayValues();
     };
 
 
 
-    // Timer stuff!!
+    // TIMER stuff!!
     let timer;
+    // we store time in seconds in the background - this allows for a nice countdown
     let timeLeft = 20 * 60; // 20 minutes in seconds
     let isRunning = false;
 
+    // timer controls
     const countdownDisplay = document.getElementById('countdown');
     const minutesInput = document.getElementById('minutesInput');
     const secondsInput = document.getElementById('secondsInput');
     const startPauseButton = document.getElementById('startPauseBtn');
     
     // Initialize the display
-    updateDisplay();
+    updateTimerDisplay();
 
-    // Start button event listener
+    // Start button event listener - this decides whether we start or stop the timer
     startPauseButton.addEventListener('click', () => {
         if (!isRunning && timeLeft > 0) {
             const minutes = parseInt(minutesInput.value) || 0; // Default to 0 if NaN
             const seconds = parseInt(secondsInput.value) || 0; // Default to 0 if NaN
             timeLeft = (minutes * 60) + seconds; // Convert to total seconds
-            updateDisplay();
+            updateTimerDisplay();
             startTimer();
             isRunning = true;
             startPauseButton.innerText='Stop'
@@ -517,13 +532,13 @@
         }
     });
 
-    // restart and pause clock
+    // reset to 20:00 and pause clock
     document.getElementById('twentyBtn').addEventListener('click', () => {
         clearInterval(timer);
         startPauseButton.disabled=false;
         isRunning = false;
         timeLeft = 20 * 60; // Reset to 20 minutes
-        updateDisplay();
+        updateTimerDisplay();
     });
 
     // zero and pause clock
@@ -531,39 +546,40 @@
         clearInterval(timer);
         isRunning = false;
         timeLeft = 0; // Reset to 00:00 minutes
-        updateDisplay();
+        updateTimerDisplay();
     });
 
+    // manually updated the time? update the timer
     minutesInput.addEventListener('blur', () => {
-        changeTimerValues();
-        
+        changeTimerValues();    
     });
 
+    // manually updated the time? update the timer
     secondsInput.addEventListener('blur', () => {
         changeTimerValues();
     });
     
+    // change timer by seconds
     document.getElementById('minusBtn').addEventListener('click', () => {
         if (timeLeft > 0) {
         timeLeft--;
         }
-        updateDisplay();
+        updateTimerDisplay();
     });
 
     document.getElementById('plusBtn').addEventListener('click', () => {
         if (timeLeft < 1200) { // 20 * 60
         timeLeft++;
         }
-        updateDisplay();
+        updateTimerDisplay();
     });
 
-    // Function to start the timer
     function startTimer() {
         if (!isRunning) {
             timer = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
-                    updateDisplay();
+                    updateTimerDisplay();
                 } else {
                     clearInterval(timer);
                 }
@@ -581,17 +597,16 @@
         clearInterval(timer);
         isRunning = false;
         timeLeft = 20 * 60; // Reset to 20 minutes
-        updateDisplay();
+        updateTimerDisplay();
     }
 
     // Function to update the countdown display
-    function updateDisplay() {
+    function updateTimerDisplay() {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
         countdownDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         minutesInput.value = minutes;
         secondsInput.value = seconds;
-        
         countdownDisplay.classList.toggle("red", timeLeft == 0); 
     }
 </script>
