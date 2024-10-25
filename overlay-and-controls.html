@@ -13,7 +13,7 @@
 
     body {
         font-family: sans-serif;
-        background-color: lightyellow;
+        background-color: green;
     }
     
     @font-face {
@@ -23,14 +23,21 @@
 
     body {
         font-family: sans-serif;
-        font-size: 1.4em;
+        font-size: 1.4rem;
         display: flex;
         align-items: flex-start;
     }
 
     h1 {
-        margin: 0 0 1em 0;
-        font-size: 1em;
+        margin: 0 0 1.5rem 0;
+        font-size: 1rem;
+        text-transform: uppercase;
+    }
+
+    h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        text-transform: uppercase;
     }
 
     .row {
@@ -65,6 +72,10 @@
         font-size: 2rem;
         padding: 0.25em;
         width: 120px;
+    }
+
+    .teamlogo {
+        width: 250px;
     }
 
     input[type="radio"] {
@@ -127,6 +138,7 @@
         gap: 4px;
         align-items: start;
     }
+
     .scoreline {
         display: flex;
         align-items: start;
@@ -135,6 +147,8 @@
     .scoreboard {
         font-size: 2rem;
         font-family: exoBold;
+        display: flex;
+        flex-direction: column;
     }
     
     .time {
@@ -158,6 +172,7 @@
         align-items: center;
         justify-content: center;
     }
+
     .period {
         padding: 16px 32px;
         font-size: 1.4rem;
@@ -173,12 +188,21 @@
     }
     
     .team {
-        width: 180px;
+        width: 130px;
         background-color: #ffffcc;
-        padding: 16px 32px;
+        padding: 16px 16px 16px 24px;
         text-transform: uppercase;
     }
     
+    .teambadge {
+        width: 60px;
+        height: 74.5px;
+        background-color: #ffffff;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: calc(100% - 16px) auto;
+    }
+
     .score {
         background-color: #000000;
         color: #ffffff;
@@ -193,10 +217,10 @@
 <div class="controls">
     <h1>Controls</h1>
     <form id="add-to-storage">
+    <h2>Home Team</h2>
     <div class="row">
         <label for="hometeam">
         Home
-
         <input type="text" name="hometeam" id="hometeam" maxlength="4">
         </label>
         <label for="hometeamcolor">Colour
@@ -210,6 +234,13 @@
             </div>
         </label>
     </div>
+    <div class="row">
+        <label for="homelogo">
+        Home logo file name
+        <input type="text" name="homelogo" id="homelogo" class="teamlogo" placeholder="abc.png" value="abc.png"/>
+        </label>
+    </div>
+    <h2>Away Team</h2>
     <div class="row">
         <label for="hometeam">Away
             <input type="text" name="awayteam" id="awayteam" maxlength="4"/>
@@ -225,7 +256,13 @@
             </div>
         </label>
     </div>
-
+    <div class="row">
+        <label for="awaylogo">
+        Away logo file name
+        <input type="text" name="awaylogo" id="awaylogo" class="teamlogo" placeholder="def.png" value="def.png"/>
+        </label>
+    </div>
+    <h2>Time controls</h2>
     <fieldset>
         <legend>Period:</legend>
         <input type="radio" id="first" name="period" class="periodcontrol" value="1st Half" checked />
@@ -255,31 +292,52 @@
     </fieldset>
 </div>
 
-<div class="scoreboard inline">
+<div class="scoreboard">
     <div class="scoreline">
         <div class="time inline" id="countdown">20:00</div>
-        <div class="team team-home inline" id="team-home" style="background: linear-gradient(to right, white 50%, grey)">AAAA</div>
+        <div class="teambadge" id="home-badge"></div>
+        <div class="team team-home inline" id="team-home" style="background: linear-gradient(to right, white 50%, grey)">
+            AAAA
+        </div>
         <div class="score inline" id="score-home">0</div>
     </div>
-    <div  class="scoreline">
+    <div class="scoreline">
         <div class="period-container">
             <div class="period" id="period">1st Half</div>
         </div>
-        <div class="team team-away inline" id="team-away" style="background: linear-gradient(to right, white 50%, grey)">BBBB</div>
+        <div class="teambadge" id="away-badge"></div>
+        <div class="team team-away inline" id="team-away" style="background: linear-gradient(to right, white 50%, grey)">
+            BBBB
+        </div>
         <div class="score inline" id="score-away">0</div>
     </div>
 </div>
     
 <script>
-    // form
+    // controls
     var addToStorageForm = document.querySelector('#add-to-storage');
     var homeTeamInput = document.querySelector('#hometeam');
     var awayTeamInput = document.querySelector('#awayteam');
+    
     var homeTeamScoreInput = document.querySelector('#hometeamscore');
     var awayTeamScoreInput = document.querySelector('#awayteamscore');
+    
     var homeTeamColorInput = document.querySelector('#hometeamcolor');
     var awayTeamColorInput = document.querySelector('#awayteamcolor');
     
+    var homeTeamLogoInput = document.querySelector('#homelogo');
+    var awayTeamLogoInput = document.querySelector('#awaylogo');
+    
+
+    // overlay
+    var homeTeam = document.querySelector('#team-home');
+    var homeBadge = document.querySelector('#home-badge');
+    var awayBadge = document.querySelector('#away-badge');
+    var awayTeam = document.querySelector('#team-away');
+    var homeTeamScore = document.querySelector('#score-home');
+    var awayTeamScore = document.querySelector('#score-away');
+    var period = document.querySelector('#period');
+
     document.querySelector('#minusAwayBtn').addEventListener('click', () => {
         if (awayTeamScoreInput.value > 0) {
             awayTeamScoreInput.value--;
@@ -301,12 +359,7 @@
     });
 
     
-    // controls
-    var homeTeam = document.querySelector('#team-home');
-    var awayTeam = document.querySelector('#team-away');
-    var homeTeamScore = document.querySelector('#score-home');
-    var awayTeamScore = document.querySelector('#score-away');
-    var period = document.querySelector('#period');
+ 
 
     function processFormValues() {    
         if (homeTeamInput.value.length > 0) {
@@ -333,6 +386,10 @@
             localStorage.setItem('hometeamcolor', homeTeamColorInput.value);
         }
 
+        
+        localStorage.setItem('awaytteamlogo', awayTeamLogoInput.value);
+        localStorage.setItem('hometteamlogo', homeTeamLogoInput.value);
+        
         localStorage.setItem('period', document.querySelector('input[name=period]:checked').value);
         
         updateDisplayValues();
@@ -356,7 +413,16 @@
     awayTeamScoreInput.addEventListener('input', processFormValues);
     homeTeamColorInput.addEventListener('input', processFormValues);
     awayTeamColorInput.addEventListener('input', processFormValues);
+    homeTeamLogoInput.addEventListener('input', processFormValues);
+    awayTeamLogoInput.addEventListener('input', processFormValues);
     
+    processFormValues();
+
+    function createAndInsertImage(filename, element) {
+        const imageUrl = `./logos/${filename}`;
+        element.style.backgroundImage = 'url(' + imageUrl + ')';
+    };
+
     // update visuals
     function updateDisplayValues() {
         // Check for saved items
@@ -368,7 +434,9 @@
         var storedHomeTeamColor = localStorage.getItem('hometeamcolor');
         var storedAwayTeamColor = localStorage.getItem('awayteamcolor');
         
-        
+        var storedHomeTeamLogo = localStorage.getItem('hometteamlogo');
+        var storedAwayTeamLogo = localStorage.getItem('awaytteamlogo');
+                
         // If there are any saved items, update controls and form
         if (storedHomeTeam) {
             homeTeam.innerText = storedHomeTeam;
@@ -400,14 +468,22 @@
             awayTeamColorInput.value = storedAwayTeamColor;
         }
 
+        homeTeamLogoInput.value = storedHomeTeamLogo;
+        createAndInsertImage(homeTeamLogoInput.value, homeBadge);
+
+        awayTeamLogoInput.value = storedAwayTeamLogo;
+        createAndInsertImage(awayTeamLogoInput.value, awayBadge);
+
+
     }
 
     updateDisplayValues();
     
-    
     window.onstorage = () => {
         updateDisplayValues();
     };
+
+
 
     // Timer stuff!!
     let timer;
@@ -510,7 +586,6 @@
     function updateDisplay() {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
-        console.log(timeLeft);
         countdownDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         minutesInput.value = minutes;
         secondsInput.value = seconds;
