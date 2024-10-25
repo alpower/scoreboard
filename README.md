@@ -1,10 +1,10 @@
-# scoreboard instructions
+# OBS scoreboard instructions
+This is a scoreboard written in HTML, CSS, JS and localstorage for use in OBS as an interactive browser source via a local single HTML file.
 
-Hopefully all self-explanatory!
-
-1. load as a browser source in OBS and choose 'local file'.
-2. Position it so that the controls are offscreen.
-3. Click 'Interact' with browser source to open an OBS panel to adjust controls
+1. Download the zip file locally.
+2. load as a browser source in OBS and choose 'local file'.
+3. Position it so that the controls are offscreen.
+4. Click 'Interact' with browser source to open an OBS panel to adjust controls
 
 ## Logos
 
