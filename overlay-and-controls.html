@@ -44,7 +44,7 @@
         display: flex;
         gap: 4px;
         margin-bottom: 16px;
-        align-items: start;
+        align-items: end;
     }
 
     .align-center {
@@ -120,7 +120,6 @@
         padding: 0.5rem;
         font-size: 2rem;
         background-color: #ccc;
-        margin-bottom: 1rem;
         border-radius: 4px;
     }
 
@@ -218,6 +217,12 @@
         width: 100px;
         text-align: center;
     }
+
+    .colorbuttons button {
+        margin: 0;
+        width: 24px;
+        height: 20px;
+    }
 </style>
 </head>
 
@@ -234,6 +239,14 @@
         <label for="hometeamcolor">Colour
             <input type="text" name="hometeamcolor" id="hometeamcolor" class="color"/>
         </label>
+        <div class="colorbuttons"  data-target="#hometeamcolor">
+            <button data-color="#FF0000"></button>
+            <button data-color="#FFFF00"></button>
+            <button data-color="#008000"></button>
+            <button data-color="#0000FF"></button>
+            <button data-color="#ffffff"></button>
+            <button data-color="#000000"></button>
+        </div>
         <label for="hometeamscore">Score
             <div class="scorebuttons">
                 <button id="minusHomeBtn" class="incrementer">&#8722;</button>
@@ -256,6 +269,14 @@
         <label for="awayteamcolor">Colour
             <input type="text" name="awayteamcolor" id="awayteamcolor" class="color"/>
         </label>
+         <div class="colorbuttons" data-target="#awayteamcolor">
+            <button data-color="#FF0000"></button>
+            <button data-color="#FFFF00"></button>
+            <button data-color="#008000"></button>
+            <button data-color="#0000FF"></button>
+            <button data-color="#ffffff"></button>
+            <button data-color="#000000"></button>
+        </div>
         <label for="awayteamscore">Score
             <div  class="scorebuttons">
                 <button id="minusAwayBtn" class="incrementer">&#8722;</button>
@@ -285,7 +306,7 @@
 
     <fieldset>
         <legend>Timer</legend>
-        <div>
+        <div class="row">
             <button id="twentyBtn">20:00</button>
             <button id="zeroBtn">00:00</button>
             <button id="startPauseBtn" class="black">Start</button>
@@ -609,6 +630,23 @@
         secondsInput.value = seconds;
         countdownDisplay.classList.toggle("red", timeLeft == 0); 
     }
+
+    // Select all buttons within the colorbuttons div
+    const buttons = document.querySelectorAll('.colorbuttons button');
+    buttons.forEach(button => {
+    const color = button.getAttribute('data-color');
+    // Set the background color of the button
+    button.style.backgroundColor = color;
+    button.onclick = function() {
+        // Get the parent element (.colorbuttons)
+        const parent = button.parentElement;
+        teamColorField = document.querySelector(parent.getAttribute('data-target'));
+        console.log(parent.getAttribute('data-target'));
+        teamColorField.value = color;
+    };
+
+});
+
 </script>
 
 </body>
