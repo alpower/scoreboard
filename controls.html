@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controls 🎛️</title>
+    <style>
+
+        body {
+            font-family: sans-serif;
+            font-size: 1.4em;
+            padding: 1rem;
+        }
+        form > label, fieldset {
+            display: block;
+            margin-bottom: 1em;
+        }       
+        
+        input {
+            display: block;
+            font-family: inherit;
+            padding: 1em;
+        }
+
+        input[type="radio"] {
+            display: inline;
+            margin-left: 1em;
+        }
+
+        button {
+            padding: 1em;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Controls</h1>
+<form id="add-to-storage">
+    <label for="hometeam">
+        Home team
+        <input type="text" name="hometeam" id="hometeam" maxlength="4">
+    </label>
+
+    <label for="hometeamscore">
+        Home team score
+        <input type="number" name="hometeamscore" id="hometeamscore">
+    </label>
+
+    <label for="hometeam">
+        Away team
+        <input type="text" name="awayteam" id="awayteam" maxlength="4">
+    </label>
+
+<label for="awayteamscore">
+        Away team score
+        <input type="number" name="awayteamscore" id="awayteamscore">
+    </label>
+    <fieldset>
+    <legend>Period:</legend>
+            <label for="first">
+                <input type="radio" id="first" name="period" class="period" value="1st Half" checked />
+            1st Half</label>
+
+            <label for="half">
+                <input type="radio" id="half" name="period" class="period" value="Half Time" />
+            Half Time</label>
+        
+            <label for="second">
+                <input type="radio" id="second" name="period" class="period" value="2nd Half" />
+            2nd Half</label>
+
+            <label for="full">
+                <input type="radio" id="full" name="period" class="period" value="Full Time" />
+            Full Time</label>
+    </fieldset>
+
+    
+
+    <button type="submit">Update</button>
+</form>
+
+<script>
+// Get form, item, and wishlist
+var addToStorage = document.querySelector('#add-to-storage');
+var hometeam = document.querySelector('#hometeam');
+var awayteam = document.querySelector('#awayteam');
+var hometeamscore = document.querySelector('#hometeamscore');
+var awayteamscore = document.querySelector('#awayteamscore');
+
+addToStorage.addEventListener('submit', function (event) {
+
+	// Don't submit the form
+	event.preventDefault();
+
+	if (hometeam.value.length > 0) {
+	    localStorage.setItem('hometeam', hometeam.value);
+    }
+    if (awayteam.value.length > 0) {
+	    localStorage.setItem('awayteam', awayteam.value);
+    }
+    if (hometeamscore.value.length > 0) {
+	    localStorage.setItem('hometeamscore', hometeamscore.value);
+    }
+    if (awayteamscore.value.length > 0) {
+	    localStorage.setItem('awayteamscore', awayteamscore.value);
+    }
+
+    localStorage.setItem('period', document.querySelector('input[name=period]:checked').value);
+    
+
+
+}, false);
+</script>
+</body>
+</html>
