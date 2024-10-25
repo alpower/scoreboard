@@ -1,281 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlay</title>
-    <style>
-        *,
-        *:before,
-        *:after {
-        box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBS Score Overlay</title>
+<style>
+    *,
+    *:before,
+    *:after {
+    box-sizing: border-box;
+    }
 
-        body {
-            font-family: sans-serif;
-            background-color: lightyellow;
-        }
-        
-        @font-face {
-            font-family: exoBold;
-            src: url(Exo-Bold.ttf);
-        }
-  
-        body {
-            font-family: sans-serif;
-            font-size: 1.4em;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        h1 {
-            margin: 0 0 1em 0;
-            font-size: 1em;
-        }
-
-        .row {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 16px;
-            align-items: start;
-        }
-
-        .align-center {
-            align-items: middle;
-        }
-        
-        .controls {
-            margin-right: 3em;
-            background-color: #eeeeee;
-            padding: 1em;
-        }
-
-        form > label, fieldset {
-            display: block;
-            margin-bottom: 0.5em;
-        }       
-        
-        label {
-            text-transform: uppercase;
-            font-size: 20px;
-        }
-        input {
-            display: block;
-            font-family: inherit;
-            font-size: 2rem;
-            padding: 0.25em;
-            width: 120px;
-        }
-
-        input[type="radio"] {
-            display: inline;   
-        }
-
-        input[type="number"] {
-            width: 80px;
-        }
-
-        input.color {
-            width: 150px;
-        }
-
-        .periodcontrol + label {
-            display: inline-block;
-            font-size: 1.5rem;
-            padding: 4px 8px;;
-            border-radius: 4px;
-        }
-
-        .periodcontrol {
-            visibility: hidden;
-            width: 0;
-            padding: 0;
-            margin: 0;
-        }
-
-        .periodcontrol:checked + label {
-            background-color: #000;
-            color: #fff;
-        }
-
-        button {
-            padding: 0.5rem;
-            font-size: 2rem;
-            background-color: #ccc;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-        }
-
-        button.black { 
-            background-color: #000;
-            color: #fff;
-        }
-
-        button.incrementer {
-            width: 60px;
-        }
-
-        input.timerInput {
-            width: 90px;
-            margin-right: 5px;
-            padding: 5px;
-        }
-
-        .scorebuttons {
-            display: flex;
-            gap: 4px;
-            align-items: start;
-        }
-        .scoreline {
-            display: flex;
-            align-items: start;
-        }
-
-        .scoreboard {
-            font-size: 2rem;
-            font-family: exoBold;
-        }
-        
-        .time {
-            background-color: yellow;
-            color: black;
-            width: 150px;
-            padding: 16px 32px;
-            text-align: right;
-        }
-
-        .time.red {
-            background-color: red;
-            color: white;
-        }
-
-        .period-container {
-            width: 150px;
-            height: 75px;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .period {
-            padding: 16px 32px;
-            font-size: 1.4rem;
-            text-align: right;
-            padding: 8px 12px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            display: inline;
-        }
-
-        .inline {
-            display: inline-block;
-        }
-        
-        .team {
-            width: 180px;
-            background-color: #ffffcc;
-            padding: 16px 32px;
-            text-transform: uppercase;
-        }
-        
-        .score {
-            background-color: #000000;
-            color: #ffffff;
-            padding: 16px 32px;
-            width: 100px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="controls">
-        <h1>Controls</h1>
-        <form id="add-to-storage">
-           <div class="row">
-             <label for="hometeam">
-                Home
-                <input type="text" name="hometeam" id="hometeam" maxlength="4">
-            </label>
-            <label for="hometeamcolor">
-                Colour
-                <input type="text" name="hometeamcolor" id="hometeamcolor" class="color">
-            </label>
-            <label for="hometeamscore">
-                Score
-                <div class="scorebuttons">
-                    <button id="minusHomeBtn" class="incrementer">&#8722;</button>
-                    <input type="number" name="hometeamscore" id="hometeamscore">
-                    <button id="plusHomeBtn" class="incrementer">&#43;</button>
-                </div>
-            </label>
-           </div>
-
-           <div class="row">
-             <label for="hometeam">
-                Away
-                <input type="text" name="awayteam" id="awayteam" maxlength="4">
-            </label>
-            <label for="awayteamcolor">
-                Colour
-                <input type="text" name="awayteamcolor" id="awayteamcolor" class="color">
-            </label>
-            <label for="awayteamscore">
-                Score
-                 <div  class="scorebuttons">
-                    <button id="minusAwayBtn" class="incrementer">&#8722;</button>
-                    <input type="number" name="awayteamscore" id="awayteamscore">
-                    <button id="plusAwayBtn" class="incrementer">&#43;</button>
-                </div>
-            </label>
-           </div>
-            <fieldset>
-            <legend>Period:</legend>
-                <input type="radio" id="first" name="period" class="periodcontrol" value="1st Half" checked />
-                <label for="first">1st Half</label>
-                
-                <input type="radio" id="half" name="period" class="periodcontrol" value="Half Time" />
-                <label for="half">Half Time</label>
-            
-                
-                <input type="radio" id="second" name="period" class="periodcontrol" value="2nd Half" />
-                <label for="second">2nd Half</label>
-
-                <input type="radio" id="full" name="period" class="periodcontrol" value="Full Time" />
-                <label for="full">Full Time</label>
-            </fieldset>
-        </form>
-        
-        <fieldset>
-            <legend>Timer:</legend>
-            <div>
-                <button id="twentyBtn">20:00</button>
-                <button id="zeroBtn">00:00</button>
-                <button id="startPauseBtn" class="black">Start</button>
-            </div>
-            <div class="row">
-                <button id="minusBtn" class="incrementer">&#8722;</button>
-                <input type="number" id="minutesInput" placeholder="Min" min="0" max="20" class="timerInput" value="20">
-                <input type="number" id="secondsInput" placeholder="Sec" min="0" max="59" class="timerInput" value="0">
-                <button id="plusBtn" class="incrementer">&#43;</button>
-            </div>
-            
-            
-        </fieldset>
-    </div>
-
-    <div class="scoreboard inline">
-        <div class="scoreline">
-            <div class="time inline" id="countdown">20:00</div><div class="team team-home inline" id="team-home" style="background: linear-gradient(to right, white 50%, grey)">AAAA</div><div class="score inline" id="score-home">0</div>
-        </div>
-        <div  class="scoreline">
-            <div class="period-container">
-                <div class="period" id="period">1st Half</div>
-            </div>
-            <div class="team team-away inline" id="team-away" style="background: linear-gradient(to right, white 50%, grey)">BBBB</div><div class="score inline" id="score-away">0</div>
-        </div>
-    </div>
+    body {
+        font-family: sans-serif;
+        background-color: lightyellow;
+    }
     
-    <script>
+    @font-face {
+        font-family: exoBold;
+        src: url(Exo-Bold.ttf);
+    }
+
+    body {
+        font-family: sans-serif;
+        font-size: 1.4em;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    h1 {
+        margin: 0 0 1em 0;
+        font-size: 1em;
+    }
+
+    .row {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 16px;
+        align-items: start;
+    }
+
+    .align-center {
+        align-items: middle;
+    }
+    
+    .controls {
+        margin-right: 3em;
+        background-color: #eeeeee;
+        padding: 1em;
+    }
+
+    form > label, fieldset {
+        display: block;
+        margin-bottom: 0.5em;
+    }       
+    
+    label {
+        text-transform: uppercase;
+        font-size: 20px;
+    }
+    input {
+        display: block;
+        font-family: inherit;
+        font-size: 2rem;
+        padding: 0.25em;
+        width: 120px;
+    }
+
+    input[type="radio"] {
+        display: inline;   
+    }
+
+    input[type="number"] {
+        width: 80px;
+        text-align: center;
+    }
+
+    input.color {
+        width: 150px;
+    }
+
+    .periodcontrol + label {
+        display: inline-block;
+        font-size: 1.5rem;
+        padding: 4px 8px;;
+        border-radius: 4px;
+    }
+
+    .periodcontrol {
+        visibility: hidden;
+        width: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .periodcontrol:checked + label {
+        background-color: #000;
+        color: #fff;
+    }
+
+    button {
+        padding: 0.5rem;
+        font-size: 2rem;
+        background-color: #ccc;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+
+    button.black { 
+        background-color: #000;
+        color: #fff;
+    }
+
+    button.incrementer {
+        width: 60px;
+    }
+
+    input.timerInput {
+        width: 90px;
+        margin-right: 5px;
+        padding: 5px;
+    }
+
+    .scorebuttons {
+        display: flex;
+        gap: 4px;
+        align-items: start;
+    }
+    .scoreline {
+        display: flex;
+        align-items: start;
+    }
+
+    .scoreboard {
+        font-size: 2rem;
+        font-family: exoBold;
+    }
+    
+    .time {
+        background-color: yellow;
+        color: black;
+        width: 150px;
+        padding: 16px 32px;
+        text-align: right;
+    }
+
+    .time.red {
+        background-color: red;
+        color: white;
+    }
+
+    .period-container {
+        width: 150px;
+        height: 75px;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .period {
+        padding: 16px 32px;
+        font-size: 1.4rem;
+        text-align: right;
+        padding: 8px 12px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        display: inline;
+    }
+
+    .inline {
+        display: inline-block;
+    }
+    
+    .team {
+        width: 180px;
+        background-color: #ffffcc;
+        padding: 16px 32px;
+        text-transform: uppercase;
+    }
+    
+    .score {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 16px 32px;
+        width: 100px;
+        text-align: center;
+    }
+</style>
+</head>
+
+<body>
+<div class="controls">
+    <h1>Controls</h1>
+    <form id="add-to-storage">
+    <div class="row">
+        <label for="hometeam">
+        Home
+
+        <input type="text" name="hometeam" id="hometeam" maxlength="4">
+        </label>
+        <label for="hometeamcolor">Colour
+            <input type="text" name="hometeamcolor" id="hometeamcolor" class="color"/>
+        </label>
+        <label for="hometeamscore">Score
+            <div class="scorebuttons">
+                <button id="minusHomeBtn" class="incrementer">&#8722;</button>
+                <input type="number" name="hometeamscore" id="hometeamscore" />
+                <button id="plusHomeBtn" class="incrementer">&#43;</button>
+            </div>
+        </label>
+    </div>
+    <div class="row">
+        <label for="hometeam">Away
+            <input type="text" name="awayteam" id="awayteam" maxlength="4"/>
+        </label>
+        <label for="awayteamcolor">Colour
+            <input type="text" name="awayteamcolor" id="awayteamcolor" class="color"/>
+        </label>
+        <label for="awayteamscore">Score
+            <div  class="scorebuttons">
+                <button id="minusAwayBtn" class="incrementer">&#8722;</button>
+                <input type="number" name="awayteamscore" id="awayteamscore"/>
+                <button id="plusAwayBtn" class="incrementer">&#43;</button>
+            </div>
+        </label>
+    </div>
+
+    <fieldset>
+        <legend>Period:</legend>
+        <input type="radio" id="first" name="period" class="periodcontrol" value="1st Half" checked />
+        <label for="first">1st Half</label>
+        <input type="radio" id="half" name="period" class="periodcontrol" value="Half Time" />
+        <label for="half">Half Time</label>
+        <input type="radio" id="second" name="period" class="periodcontrol" value="2nd Half" />
+        <label for="second">2nd Half</label>
+        <input type="radio" id="full" name="period" class="periodcontrol" value="Full Time" />
+        <label for="full">Full Time</label>
+    </fieldset>
+    </form>
+
+    <fieldset>
+        <legend>Timer:</legend>
+        <div>
+            <button id="twentyBtn">20:00</button>
+            <button id="zeroBtn">00:00</button>
+            <button id="startPauseBtn" class="black">Start</button>
+        </div>
+        <div class="row">
+            <button id="minusBtn" class="incrementer">&#8722;</button>
+            <input type="number" id="minutesInput" placeholder="Min" min="0" max="20" class="timerInput" value="20"/>
+            <input type="number" id="secondsInput" placeholder="Sec" min="0" max="59" class="timerInput" value="0"/>
+            <button id="plusBtn" class="incrementer">&#43;</button>
+        </div>
+    </fieldset>
+</div>
+
+<div class="scoreboard inline">
+    <div class="scoreline">
+        <div class="time inline" id="countdown">20:00</div>
+        <div class="team team-home inline" id="team-home" style="background: linear-gradient(to right, white 50%, grey)">AAAA</div>
+        <div class="score inline" id="score-home">0</div>
+    </div>
+    <div  class="scoreline">
+        <div class="period-container">
+            <div class="period" id="period">1st Half</div>
+        </div>
+        <div class="team team-away inline" id="team-away" style="background: linear-gradient(to right, white 50%, grey)">BBBB</div>
+        <div class="score inline" id="score-away">0</div>
+    </div>
+</div>
+    
+<script>
     // form
     var addToStorageForm = document.querySelector('#add-to-storage');
     var homeTeamInput = document.querySelector('#hometeam');
@@ -313,18 +308,19 @@
     var awayTeamScore = document.querySelector('#score-away');
     var period = document.querySelector('#period');
 
-    function processFormValues() {
-        
+    function processFormValues() {    
         if (homeTeamInput.value.length > 0) {
             localStorage.setItem('hometeam', homeTeamInput.value);
         }
+
         if (awayTeamInput.value.length > 0) {
             localStorage.setItem('awayteam', awayTeamInput.value);
-        }
-        
+        }      
+
         if (homeTeamScoreInput.value.length > 0) {
             localStorage.setItem('hometeamscore', homeTeamScoreInput.value);
         }
+
         if (awayTeamScoreInput.value.length > 0) {
             localStorage.setItem('awayteamscore', awayTeamScoreInput.value);
         }
@@ -332,6 +328,7 @@
         if (awayTeamColorInput.value.length > 0) {
             localStorage.setItem('awayteamcolor', awayTeamColorInput.value);
         }
+
         if (homeTeamColorInput.value.length > 0) {
             localStorage.setItem('hometeamcolor', homeTeamColorInput.value);
         }
@@ -412,6 +409,7 @@
         updateDisplayValues();
     };
 
+    // Timer stuff!!
     let timer;
     let timeLeft = 20 * 60; // 20 minutes in seconds
     let isRunning = false;
@@ -420,6 +418,7 @@
     const minutesInput = document.getElementById('minutesInput');
     const secondsInput = document.getElementById('secondsInput');
     const startPauseButton = document.getElementById('startPauseBtn');
+    
     // Initialize the display
     updateDisplay();
 
@@ -494,7 +493,7 @@
         }
     }
 
-    // Function to reset the timer
+    // Function to change the timer to whatever was manually set
     function changeTimerValues() {
         timeLeft = (minutesInput.value * 60) + secondsInput.value;
     }
@@ -516,9 +515,9 @@
         minutesInput.value = minutes;
         secondsInput.value = seconds;
         
-        countdownDisplay.classList.toggle("red", timeLeft == 0);
-      
+        countdownDisplay.classList.toggle("red", timeLeft == 0); 
     }
-    </script>
+</script>
+
 </body>
 </html>
