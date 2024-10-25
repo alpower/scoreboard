@@ -4,7 +4,7 @@ Hopefully all self-explanatory!
 
 1. load as a browser source in OBS and choose 'local file'.
 2. Position it so that the controls are offscreen.
-3. Click 'Interact' with browser source
+3. Click 'Interact' with browser source to open an OBS panel to adjust controls
 
 ## Logos
 
