@@ -14,11 +14,17 @@
     body {
         font-family: sans-serif;
         background-color: lightyellow;
+        margin: 0;
     }
     
     @font-face {
         font-family: exoBold;
         src: url(Exo-Bold.ttf);
+    }
+
+    @font-face {
+        font-family: exoSemiBold;
+        src: url(Exo-SemiBold.ttf);
     }
 
     body {
@@ -51,6 +57,7 @@
         align-items: middle;
     }
     
+    /* CONTROLS */
     .controls {
         margin-right: 3em;
         background-color: #eeeeee;
@@ -144,24 +151,27 @@
         align-items: start;
     }
 
-    .scoreline {
-        display: flex;
-        align-items: start;
-    }
-
+    /* SCOREBOARD */
     .scoreboard {
-        font-size: 2rem;
-        font-family: exoBold;
+        font-family: exoSemiBold;
         display: flex;
         flex-direction: column;
     }
-    
+
+    .scoreline {
+        display: flex;
+        align-items: stretch;
+        height: 50px;
+        font-size: 30px;
+    }
+
     .time {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 110px;
         background-color: yellow;
         color: black;
-        width: 150px;
-        padding: 16px 32px;
-        text-align: right;
     }
 
     .time.red {
@@ -170,52 +180,44 @@
     }
 
     .period-container {
-        width: 150px;
-        height: 75px;
-        padding: 8px;
+        width: 110px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .period {
-        padding: 16px 32px;
-        font-size: 1.4rem;
+        font-size: 18px;
         text-align: right;
-        padding: 8px 12px;
         background-color: #ffffff;
         border-radius: 8px;
-        display: inline;
-    }
-
-    .inline {
-        display: inline-block;
+        padding: 4px;
     }
     
     .team {
         width: 130px;
-        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background-color: #ffffcc;
-        padding: 16px 16px 16px 24px;
         text-transform: uppercase;
     }
     
     .teambadge {
         width: 60px;
-        height: 75px;
-        background-color: #ffffff;
+        background-color: #d2cfcf;
         background-position: center center;
         background-repeat: no-repeat;
-        background-size: calc(100% - 16px) auto;
+        background-size: calc(100% - 24px) auto;
     }
 
     .score {
         background-color: #000000;
         color: #ffffff;
-        padding: 16px 32px;
-        height: 75px;
-        width: 100px;
-        text-align: center;
+        width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .colorbuttons button {
@@ -322,22 +324,22 @@
 
 <div class="scoreboard">
     <div class="scoreline">
-        <div class="time inline" id="countdown">20:00</div>
+        <div class="time" id="countdown">20:00</div>
         <div class="teambadge" id="home-badge"></div>
-        <div class="team team-home inline" id="team-home" style="background: linear-gradient(to right, white 50%, grey)">
+        <div class="team team-home" id="team-home" style="background: linear-gradient(to right, #d2cfcf 70%, grey)">
             AAAA
         </div>
-        <div class="score inline" id="score-home">0</div>
+        <div class="score" id="score-home">0</div>
     </div>
     <div class="scoreline">
         <div class="period-container">
             <div class="period" id="period">1st Half</div>
         </div>
         <div class="teambadge" id="away-badge"></div>
-        <div class="team team-away inline" id="team-away" style="background: linear-gradient(to right, white 50%, grey)">
+        <div class="team team-away" id="team-away" style="background: linear-gradient(to right, #d2cfcf 70%, grey)">
             BBBB
         </div>
-        <div class="score inline" id="score-away">0</div>
+        <div class="score" id="score-away">0</div>
     </div>
 </div>
     
@@ -493,12 +495,12 @@
 
         // add the team colours into the scoreboard
         if (storedHomeTeamColor) {
-            homeTeam.style.background = `linear-gradient(to right, white 50%, ${storedHomeTeamColor})`;
+            homeTeam.style.background = `linear-gradient(to right, #d2cfcf 70%, ${storedHomeTeamColor})`;
             homeTeamColorInput.value = storedHomeTeamColor;
         }
 
         if (storedAwayTeamColor) {
-            awayTeam.style.background = `linear-gradient(to right, white 50%, ${storedAwayTeamColor})`;
+            awayTeam.style.background = `linear-gradient(to right, #d2cfcf 70%, ${storedAwayTeamColor})`;
             awayTeamColorInput.value = storedAwayTeamColor;
         }
 
