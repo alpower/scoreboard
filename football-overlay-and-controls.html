@@ -535,8 +535,6 @@
         updateDisplayValues();
     };
 
-
-
     // TIMER stuff!!
     let timer;
     // we store time in seconds in the background - this allows for a nice clock
@@ -623,6 +621,7 @@
         updateTimerDisplay(timePast);
     });
 
+    // Starts the timer running.
     function startTimer() {
         if (!isRunning) {
             timer = setInterval(() => {
@@ -648,8 +647,8 @@
         clockDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         minutesInput.value = minutes;
         secondsInput.value = seconds;
-        clockDisplay.classList.toggle("red", timePast > 2700 && localStorage.getItem('period') == "1st Half");
-        clockDisplay.classList.toggle("red", timePast > 5400 && localStorage.getItem('period') == "2nd Half");  
+        clockDisplay.classList.toggle("red", timePast > 2700 && localStorage.getItem('period') == "1st Half"); // turns the clock red after 45 minutes have passed in the first half indicating in added time.
+        clockDisplay.classList.toggle("red", timePast > 5400 && localStorage.getItem('period') == "2nd Half"); // turns the clock red after 90 minutes have passed in the second half indicating in added time.
     }
 
     // Select all buttons within the colorbuttons div
